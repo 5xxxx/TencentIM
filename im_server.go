@@ -17,6 +17,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/NSObjects/TencentIM/tools/sign"
@@ -43,6 +44,10 @@ func NewIMServer(appId, expire int, identifier, secretKey string) (IMServer, err
 	}
 
 	return server, nil
+}
+
+func (s IMServer) RunCallBack() {
+	go Run(strconv.Itoa(s.AppId))
 }
 
 func (s IMServer) request(url string, requestJson []byte) ([]byte, error) {
