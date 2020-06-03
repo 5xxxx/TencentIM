@@ -20,8 +20,8 @@ import (
 var mutex sync.Mutex
 
 const (
-	StateStateChange           = "State.StateChang"
-	SnsFriendAdd               = "Sns.CallbackFriendAdd"
+	StateStateChange           = "State.StateChange"
+	SnsFriendAdd               = "Sns.CallbackFriend"
 	SnsFriendDelete            = "Sns.CallbackFriendDelete"
 	SnsBlackListAdd            = "Sns.CallbackBlackListAdd"
 	SnsBlackListDelete         = "Sns.CallbackBlackListDelete"
@@ -41,11 +41,11 @@ const (
 )
 
 type Req struct {
-	SdkAppid        string `json:"SdkAppid" form:"SdkAppid" query:"SdkAppid"`
-	CallbackCommand string `json:"CallbackCommand" form:"CallbackCommand" query:"CallbackCommand"`
-	Contenttype     string `json:"contenttype" form:"contenttype" query:"contenttype"`
-	ClientIP        string `json:"ClientIP" form:"ClientIP" query:"ClientIP"`
-	OptPlatform     string `json:"OptPlatform" form:"OptPlatform" query:"OptPlatform"`
+	SdkAppid        string `query:"SdkAppid"`
+	CallbackCommand string `query:"CallbackCommand"`
+	Contenttype     string `query:"contenttype"`
+	ClientIP        string `query:"ClientIP"`
+	OptPlatform     string `query:"OptPlatform"`
 }
 
 type Response struct {
@@ -59,17 +59,15 @@ func Run(appId string) {
 	e.POST("/imcallback", func(c echo.Context) error {
 		var req Req
 		var response Response
-		if err := c.Bind(&req); err != nil {
-			response.ActionStatus = "fail"
-			response.ErrorCode = 400
-			response.ErrorInfo = err.Error()
-			return c.JSON(http.StatusOK, response)
-		}
+		req.SdkAppid = c.QueryParam("SdkAppid")
+		req.CallbackCommand = c.QueryParam("CallbackCommand")
+		req.OptPlatform = c.QueryParam("OptPlatform")
+		req.ClientIP = c.QueryParam("ClientIP")
+		req.Contenttype = c.QueryParam("contenttype")
 
 		if appId != req.SdkAppid {
 			return nil
 		}
-
 		if err := command(req, c); err != nil {
 			response.ActionStatus = "fail"
 			response.ErrorCode = 400
@@ -81,11 +79,15 @@ func Run(appId string) {
 		response.ErrorCode = 0
 		return c.JSON(http.StatusOK, response)
 	})
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":80"))
 }
 
 func command(req Req, c echo.Context) error {
-	return h[req.CallbackCommand](req, c)
+	if cmd, ok := h[req.CallbackCommand]; ok {
+		return cmd(req, c)
+	}
+
+	return nil
 }
 
 func AddCommandFuc(command string, commandFunc CommandFunc) {
@@ -95,24 +97,24 @@ func AddCommandFuc(command string, commandFunc CommandFunc) {
 }
 
 var h = map[string]CommandFunc{
-	"State.StateChang":                    StateChange,
-	"Sns.CallbackFriendAdd":               FriendAdd,
-	"Sns.CallbackFriendDelete":            FriendDelete,
-	"Sns.CallbackBlackListAdd":            BlackListAdd,
-	"Sns.CallbackBlackListDelete":         BlackListDelete,
-	"C2C.CallbackBeforeSendMsg":           BeforeSendMsg,
-	"C2C.CallbackAfterSendMsg":            AfterSendMsg,
-	"Group.CallbackBeforeCreateGroup":     BeforeCreateGroup,
-	"Group.CallbackAfterCreateGroup":      AfterCreateGroup,
-	"Group.CallbackBeforeApplyJoinGroup":  BeforeApplyJoinGroup,
-	"Group.CallbackBeforeInviteJoinGroup": BeforeInviteJoinGroup,
-	"Group.CallbackAfterNewMemberJoin":    AfterNewMemberJoin,
-	"Group.CallbackAfterMemberExit":       AfterMemberExit,
-	"Group.CallbackBeforeSendMsg":         BeforeSendMsg,
-	"Group.CallbackAfterSendMsg":          GafterSendMsg,
-	"Group.CallbackAfterGroupFull":        AfterGroupFull,
-	"Group.CallbackAfterGroupDestroyed":   AfterGroupDestroyed,
-	"Group.CallbackAfterGroupInfoChanged": AfterGroupInfoChanged,
+	StateStateChange:           StateChange,
+	SnsFriendAdd:               FriendAdd,
+	SnsFriendDelete:            FriendDelete,
+	SnsBlackListAdd:            BlackListAdd,
+	SnsBlackListDelete:         BlackListDelete,
+	C2CBeforeSendMsg:           BeforeSendMsg,
+	C2CAfterSendMsg:            AfterSendMsg,
+	GroupBeforeCreateGroup:     BeforeCreateGroup,
+	GroupAfterCreateGroup:      AfterCreateGroup,
+	GroupBeforeApplyJoinGroup:  BeforeApplyJoinGroup,
+	GroupBeforeInviteJoinGroup: BeforeInviteJoinGroup,
+	GroupAfterNewMemberJoin:    AfterNewMemberJoin,
+	GroupAfterMemberExit:       AfterMemberExit,
+	GroupBeforeSendMsg:         BeforeSendMsg,
+	GroupAfterSendMsg:          GafterSendMsg,
+	GroupAfterGroupFull:        AfterGroupFull,
+	GroupAfterGroupDestroyed:   AfterGroupDestroyed,
+	GroupAfterGroupInfoChanged: AfterGroupInfoChanged,
 }
 
 type CommandFunc func(req Req, c echo.Context) error

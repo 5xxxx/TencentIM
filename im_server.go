@@ -46,8 +46,8 @@ func NewIMServer(appId, expire int, identifier, secretKey string) (IMServer, err
 	return server, nil
 }
 
-func (s IMServer) RunCallBack() {
-	go Run(strconv.Itoa(s.AppId))
+func (s IMServer) ListenCallback() {
+	Run(strconv.Itoa(s.AppId))
 }
 
 func (s IMServer) request(url string, requestJson []byte) ([]byte, error) {
