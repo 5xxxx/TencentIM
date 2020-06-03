@@ -21,7 +21,7 @@ var mutex sync.Mutex
 
 const (
 	StateStateChange           = "State.StateChange"
-	SnsFriendAdd               = "Sns.CallbackFriend"
+	SnsFriendAdd               = "Sns.CallbackFriendAdd"
 	SnsFriendDelete            = "Sns.CallbackFriendDelete"
 	SnsBlackListAdd            = "Sns.CallbackBlackListAdd"
 	SnsBlackListDelete         = "Sns.CallbackBlackListDelete"
