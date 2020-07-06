@@ -31,7 +31,7 @@ type IMServer struct {
 	Sig        string
 }
 
-func NewIMServer(appId, expire int, identifier, secretKey string) (IMServer, error) {
+func NewIMServer(appId, expire int, identifier, secretKey string, opts ...ServerOption) (IMServer, error) {
 	server := IMServer{
 		AppId:      appId,
 		Identifier: identifier,
@@ -41,6 +41,11 @@ func NewIMServer(appId, expire int, identifier, secretKey string) (IMServer, err
 	var err error
 	if server.Sig, err = server.userSig(); err != nil {
 		return IMServer{}, err
+	}
+	for _, opt := range opts {
+		if err := opt.SetOption(&server); err != nil {
+			return IMServer{}, err
+		}
 	}
 
 	return server, nil
