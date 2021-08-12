@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/NSObjects/TencentIM/tools/sign"
+	"github.com/5xxxx/TencentIM/tools/sign"
 )
 
 type IMServer struct {
