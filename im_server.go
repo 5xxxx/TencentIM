@@ -14,13 +14,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/5xxxx/TencentIM/tools/sign"
+	"github.com/go-resty/resty/v2"
 	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
-
-	"github.com/5xxxx/TencentIM/tools/sign"
 )
 
 type IMServer struct {
@@ -57,36 +55,21 @@ func (s IMServer) ListenCallback() {
 
 func (s IMServer) request(url string, requestJson []byte) ([]byte, error) {
 	body := bytes.NewBuffer(requestJson)
-	// Create client
-	fmt.Println(string(requestJson))
-	client := &http.Client{}
-
-	// Create request
-	req, err := http.NewRequest("POST", url, body)
-
-	// Headers
-	req.Header.Add("Content-Type", "application/json; charset=utf-8")
-
-	// Fetch Request
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	// Read Response Body
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("http erro status code is %d", resp.StatusCode)
-	}
+	client := resty.New()
 	var respCheck struct {
 		ErrorInfo string `json:"ErrorInfo"`
 		ErrorCode int    `json:"ErrorCode"`
 	}
-	if err = json.Unmarshal(respBody, &respCheck); err != nil {
+	response, err := client.R().
+		SetHeader("Content-Type", "application/json; charset=utf-8").
+		SetResult(&respCheck).
+		SetBody(body).Post(url)
+	if err != nil {
 		return nil, err
+	}
+
+	if response.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("http erro status code is %d", response.StatusCode())
 	}
 
 	if respCheck.ErrorCode != 0 {
@@ -94,8 +77,7 @@ func (s IMServer) request(url string, requestJson []byte) ([]byte, error) {
 			"https://cloud.tencent.com/document/product/269/1671", respCheck.ErrorCode, respCheck.ErrorInfo)
 	}
 
-	fmt.Println("response Body : ", string(respBody))
-	return respBody, nil
+	return response.Body(), nil
 
 }
 
@@ -123,8 +105,6 @@ func (s IMServer) userSig() (string, error) {
 }
 
 func (s IMServer) combineURL(path IMPath) string {
-	rand.Seed(time.Now().Unix())
-
 	return fmt.Sprintf("%s/%s%s?sdkappid=%d&identifier=%s&usersig=%s&random=%d&contenttype=json",
 		BASE_URL, VERSION, path, s.AppId, s.Identifier, s.Sig, rand.Intn(4294967294))
 }

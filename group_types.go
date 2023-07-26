@@ -11,7 +11,7 @@
 package TencentIM
 
 // GroupType 如果仅需要返回特定群组形态的群组，可以通过 GroupType 进行过滤，但此时返回的 TotalCount 的含义就变成了 App 中属于该群组形态的群组总数。不填为获取所有类型的群组。
-//群组形态包括 Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（音视频聊天室）和 BChatRoom（在线成员广播大群）
+// 群组形态包括 Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（音视频聊天室）和 BChatRoom（在线成员广播大群）
 type GroupType string
 
 const (
@@ -22,19 +22,19 @@ const (
 	BChatRoom     GroupType = "BChatRoom"
 )
 
-//Owner_Account	String	选填	群主 ID，自动添加到群成员中。如果不填，群没有群主
-//Type	String	必填	群组形态，包括 Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（音视频聊天室），BChatRoom（在线成员广播大群）
-//GroupId	String	选填	为了使得群组 ID 更加简单，便于记忆传播，腾讯云支持 App 在通过 REST API 创建群组时 自定义群组 ID
-//Name	String	必填	群名称，最长30字节，使用 UTF-8 编码，1个汉字占3个字节
-//Introduction	String	选填	群简介，最长240字节，使用 UTF-8 编码，1个汉字占3个字节
-//Notification	String	选填	群公告，最长300字节，使用 UTF-8 编码，1个汉字占3个字节
-//FaceUrl	String	选填	群头像 URL，最长100字节
-//MaxMemberCount	Integer	选填	最大群成员数量，缺省时的默认值：私有群是200，公开群是2000，聊天室是6000，音视频聊天室和在线成员广播大群无限制
-//ApplyJoinOption	String	选填	申请加群处理方式。包含 FreeAccess（自由加入），NeedPermission（需要验证），DisableApply（禁止加群），不填默认为 NeedPermission（需要验证）
-//仅当创建支持申请加群的 群组 时，该字段有效
-//AppDefinedData	Array	选填	群组维度的自定义字段，默认情况是没有的，需要开通，详情请参阅 自定义字段
-//MemberList	Array	选填	初始群成员列表，最多500个；成员信息字段详情请参阅 群成员资料
-//AppMemberDefinedData	Array	选填	群成员维度的自定义字段，默认情况是没有的，需要开通，详情请参阅 自定义字段
+// Group Owner_Account	String	选填	群主 ID，自动添加到群成员中。如果不填，群没有群主
+// Type	String	必填	群组形态，包括 Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（音视频聊天室），BChatRoom（在线成员广播大群）
+// GroupId	String	选填	为了使得群组 ID 更加简单，便于记忆传播，腾讯云支持 App 在通过 REST API 创建群组时 自定义群组 ID
+// Name	String	必填	群名称，最长30字节，使用 UTF-8 编码，1个汉字占3个字节
+// Introduction	String	选填	群简介，最长240字节，使用 UTF-8 编码，1个汉字占3个字节
+// Notification	String	选填	群公告，最长300字节，使用 UTF-8 编码，1个汉字占3个字节
+// FaceUrl	String	选填	群头像 URL，最长100字节
+// MaxMemberCount	Integer	选填	最大群成员数量，缺省时的默认值：私有群是200，公开群是2000，聊天室是6000，音视频聊天室和在线成员广播大群无限制
+// ApplyJoinOption	String	选填	申请加群处理方式。包含 FreeAccess（自由加入），NeedPermission（需要验证），DisableApply（禁止加群），不填默认为 NeedPermission（需要验证）
+// 仅当创建支持申请加群的 群组 时，该字段有效
+// AppDefinedData	Array	选填	群组维度的自定义字段，默认情况是没有的，需要开通，详情请参阅 自定义字段
+// MemberList	Array	选填	初始群成员列表，最多500个；成员信息字段详情请参阅 群成员资料
+// AppMemberDefinedData	Array	选填	群成员维度的自定义字段，默认情况是没有的，需要开通，详情请参阅 自定义字段
 type Group struct {
 	OwnerAccount    string           `json:"Owner_Account"`
 	Type            string           `json:"Type"`
@@ -142,12 +142,12 @@ type ModifyGroupMemberInfo struct {
 	AppMemberDefinedData []AppDefinedData `json:"AppMemberDefinedData"`
 }
 
-//Member_Account	String	必填	需要查询的用户帐号
-//WithHugeGroups	Integer	选填	是否获取用户加入的音视频聊天室和在线成员广播大群，0表示不获取，1表示获取。默认为0
-//WithNoActiveGroups	Integer	选填	是否获取用户加入的未激活私有群信息，0表示不获取，1表示获取。默认为0
-//Limit	Integer	选填	单次拉取的群组数量，如果不填代表所有群组，分页方式与 获取 App 中的所有群组 相同
-//Offset	Integer	选填	从第多少个群组开始拉取，分页方式与 获取 App 中的所有群组 相同
-//GroupType	String	选填	拉取哪种群组形态，例如 Private，Public，ChatRoom 或 AVChatRoom，不填为拉取所有
+// JoinGroupList Member_Account	String	必填	需要查询的用户帐号
+// WithHugeGroups	Integer	选填	是否获取用户加入的音视频聊天室和在线成员广播大群，0表示不获取，1表示获取。默认为0
+// WithNoActiveGroups	Integer	选填	是否获取用户加入的未激活私有群信息，0表示不获取，1表示获取。默认为0
+// Limit	Integer	选填	单次拉取的群组数量，如果不填代表所有群组，分页方式与 获取 App 中的所有群组 相同
+// Offset	Integer	选填	从第多少个群组开始拉取，分页方式与 获取 App 中的所有群组 相同
+// GroupType	String	选填	拉取哪种群组形态，例如 Private，Public，ChatRoom 或 AVChatRoom，不填为拉取所有
 type JoinGroupList struct {
 	MemberAccount  string         `json:"Member_Account"`
 	Limit          int            `json:"Limit"`
@@ -156,9 +156,9 @@ type JoinGroupList struct {
 	ResponseFilter ResponseFilter `json:"ResponseFilter"`
 }
 
-//ResponseFilter	Object	选填	分别包含 GroupBaseInfoFilter 和 SelfInfoFilter
-//两个过滤器； GroupBaseInfoFilter 表示需要拉取哪些基础信息字段，详情请参阅 群组系统；
-//SelfInfoFilter 表示需要拉取用户在每个群组中的哪些个人资料，详情请参阅 群组系统
+// ResponseFilter	Object	选填	分别包含 GroupBaseInfoFilter 和 SelfInfoFilter
+// 两个过滤器； GroupBaseInfoFilter 表示需要拉取哪些基础信息字段，详情请参阅 群组系统；
+// SelfInfoFilter 表示需要拉取用户在每个群组中的哪些个人资料，详情请参阅 群组系统
 // https://cloud.tencent.com/document/product/269/1502
 type ResponseFilter struct {
 	GroupBaseInfoFilter []string `json:"GroupBaseInfoFilter"`
@@ -189,7 +189,7 @@ type ShuttedUinList struct {
 	ShuttedUntil  int    `json:"ShuttedUntil"`
 }
 
-// GroupId	String	必填	向哪个群组发送消息
+// GroupMsg GroupId	String	必填	向哪个群组发送消息
 // Random	Integer	必填	32位随机数。如果5分钟内两条消息的随机值相同，后一条消息将被当做重复消息而丢弃
 // MsgPriority	String	选填	消息的优先级
 // MsgBody	Array	必填	消息体，详细可参阅 消息格式描述
@@ -229,12 +229,12 @@ type ImportMsgResult struct {
 	MsgTime int64 `json:"MsgTime"`
 }
 
-//From_Account	String	消息的发送者
-//IsPlaceMsg	Integer	是否是空洞消息，当消息被删除或者消息过期后，MsgBody 为空，这个字段为1
-//MsgRandom	Integer	消息随机值，用来对消息去重，有客户端发消息时填写，如果没有填，服务端会自动生成一个
-//MsgSeq	Integer	消息 seq，用来标识唯一消息，值越小发送的越早
-//MsgTimeStamp	Integer	消息被发送的时间戳，server 的时间
-//MsgBody	Array	消息内容，详情请参见 消息内容 MsgBody 说明
+// RspMsgList From_Account	String	消息的发送者
+// IsPlaceMsg	Integer	是否是空洞消息，当消息被删除或者消息过期后，MsgBody 为空，这个字段为1
+// MsgRandom	Integer	消息随机值，用来对消息去重，有客户端发消息时填写，如果没有填，服务端会自动生成一个
+// MsgSeq	Integer	消息 seq，用来标识唯一消息，值越小发送的越早
+// MsgTimeStamp	Integer	消息被发送的时间戳，server 的时间
+// MsgBody	Array	消息内容，详情请参见 消息内容 MsgBody 说明
 type RspMsgList struct {
 	FromAccount  string    `json:"From_Account"`
 	IsPlaceMsg   int       `json:"IsPlaceMsg"`
@@ -244,11 +244,11 @@ type RspMsgList struct {
 	MsgTimeStamp int       `json:"MsgTimeStamp"`
 }
 
-//GroupId	String	请求中的群组 ID
-//IsFinished	Integer	是否返回了请求区间的全部消息
-//当消息长度太长或者区间太大（超过20）导致无法返回全部消息时，值为0
-//当消息长度太长或者区间太大（超过20）且所有消息都过期时，值为2
-//RspMsgList	Array	返回的消息列表
+// GroupId	String	请求中的群组 ID
+// IsFinished	Integer	是否返回了请求区间的全部消息
+// 当消息长度太长或者区间太大（超过20）导致无法返回全部消息时，值为0
+// 当消息长度太长或者区间太大（超过20）且所有消息都过期时，值为2
+// RspMsgList	Array	返回的消息列表
 type RoamingMessage struct {
 	GroupID    string       `json:"GroupId"`
 	IsFinished int          `json:"IsFinished"`
